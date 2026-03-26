@@ -41,6 +41,9 @@ Shader "Unlit/HeadShader"
             {
                 v2f o;
 
+                // v.vertex.y += cos(_Time.y + v.vertex.y * _Period);
+                // v.vertex.z += cos(_Time.z + v.vertex.z * _Period);
+                // v.vertex.x += cos(_Time.x + v.vertex.x * _Period);
                 v.vertex.y += cos(_Time.y + v.vertex.x * _Period);
                 v.vertex.z += sin(_Time.y + v.vertex.x * _Period);
                 v.vertex.x += atan(_Time.y + v.vertex.x * _Period);

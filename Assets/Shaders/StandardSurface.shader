@@ -9,7 +9,7 @@ Shader "Unlit/StandardSurface"
         _SpecColor2 ("Specular Color", Color) = (1,1,1,1)
         _Shininess ("Shininess", Range(1,256)) = 32
         _SpecInt("Specular Intensity", Range(0,2)) = 1.0
-
+        _Period ("Period", Range(0.0, 100.0)) = 1.0 
     }
     SubShader
     {
@@ -53,10 +53,18 @@ Shader "Unlit/StandardSurface"
             float _SpecInt;
             float _Shininess;
             float4 _SpecColor2;
+            float _Period;
 
             v2f vert (appdata v)
             {
                 v2f o;
+                // v.vertex.y += cos(_Time.y + v.vertex.y * _Period);
+                // v.vertex.z += cos(_Time.z + v.vertex.z * _Period);
+                // v.vertex.x += cos(_Time.x + v.vertex.x * _Period);
+                v.vertex.y += sin(_Time.y + v.vertex.y * _Period);
+                //v.vertex.z += sin(_Time.z + v.vertex.z * _Period);
+                //v.vertex.x += cos(_Time.x + v.vertex.x * _Period);
+
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 

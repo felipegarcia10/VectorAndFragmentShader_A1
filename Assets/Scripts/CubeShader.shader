@@ -3,6 +3,7 @@ Shader "Unlit/CubeShader"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Period ("Period", Range(0.0, 100.0)) = 1.0 
     }
     SubShader
     {
@@ -34,12 +35,16 @@ Shader "Unlit/CubeShader"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
-
+            float _Period;
+            
             v2f vert (appdata v)
             {
                 v2f o;
 
-                v.vertex.x += 0;
+                //v.vertex.x += 0;
+                v.vertex.y += cos(_Time.y + v.vertex.y * _Period);
+                v.vertex.z += cos(_Time.z + v.vertex.z * _Period);
+                v.vertex.x += cos(_Time.x + v.vertex.x * _Period);
 
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
