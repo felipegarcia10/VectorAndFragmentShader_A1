@@ -7,9 +7,13 @@ Shader "Unlit/StandardSurface"
         _AmbientColor("Ambient Color", Color) = (1,1,1,1)
         _DiffuseInt ("Diffuse Intensity", Range(0,1)) = 1.0
         _SpecColor2 ("Specular Color", Color) = (1,1,1,1)
-        _Shininess ("Shininess", Range(1,256)) = 32
+        _Shininess ("Shininess", Range(1,256)) = 255
         _SpecInt("Specular Intensity", Range(0,2)) = 1.0
-        _Period ("Period", Range(0.0, 100.0)) = 100.0 
+        _Period ("Period", Range(0.0, 100.0)) = 2.0 
+
+        _EmissionColor ("Emission Color", Color) = (1,0.5,0,1)
+        _EmissionStrength ("Emission Strength", Range(0,5)) = 1
+        _EmissionSpeed ("Emission Speed", Range(0,10)) = 2
     }
     SubShader
     {
@@ -55,16 +59,19 @@ Shader "Unlit/StandardSurface"
             float4 _SpecColor2;
             float _Period;
 
+            float4 _EmissionColor;
+            float _EmissionStrength;
+            float _EmissionSpeed;
+
             v2f vert (appdata v)
             {
                 v2f o;
-                // v.vertex.y += cos(_Time.y + v.vertex.y * _Period);
-                // v.vertex.z += cos(_Time.z + v.vertex.z * _Period);
-                // v.vertex.x += cos(_Time.x + v.vertex.x * _Period);
-                v.vertex.y += sin(_Time.y + v.vertex.y * _Period);
-                //v.vertex.z += sin(_Time.z + v.vertex.z * _Period);
-                //v.vertex.x += cos(_Time.x + v.vertex.x * _Period);
 
+                v.vertex.y += sin(_Time.z + v.vertex.z * _Period);
+                v.vertex.x += sin(_Time.y + v.vertex.z * _Period);
+                v.vertex.z += sin(_Time.x + v.vertex.z * _Period);
+
+                
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
@@ -79,6 +86,9 @@ Shader "Unlit/StandardSurface"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                
+                
+
                 float3 L = normalize(_WorldSpaceLightPos0.xyz);
                 float3 N = normalize(i.normal_world);
 
@@ -99,7 +109,14 @@ Shader "Unlit/StandardSurface"
 
                 float3 lighting = ambient + diffuse + specularColor;
 
-                col += float4(lighting, 0.0);
+                //pulse
+                float pulse = sin(_Time.y * _EmissionSpeed) * 0.5 + 0.5;
+
+                float3 emission = _EmissionColor.rgb * pulse * _EmissionStrength;
+
+                lighting += emission;
+
+                col += float4(lighting, 0.0);                              
 
                 // col.rgb +=ambient;
                 // apply fog
