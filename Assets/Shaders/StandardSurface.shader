@@ -9,7 +9,7 @@ Shader "Unlit/StandardSurface"
         _SpecColor2 ("Specular Color", Color) = (1,1,1,1)
         _Shininess ("Shininess", Range(1,256)) = 32
         _SpecInt("Specular Intensity", Range(0,2)) = 1.0
-        _Period ("Period", Range(0.0, 100.0)) = 1.0 
+        _Period ("Period", Range(0.0, 100.0)) = 100.0 
     }
     SubShader
     {
